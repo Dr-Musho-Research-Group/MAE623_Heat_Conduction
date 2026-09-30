@@ -1,0 +1,776 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ============================================================
+% Page layout and typography
+% ============================================================
+\usepackage[
+  top=0.68in,
+  bottom=0.68in,
+  left=0.80in,
+  right=0.80in
+]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,array,tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{xurl}
+\usepackage{hyperref}
+
+% ============================================================
+% Colors
+% ============================================================
+\definecolor{wvuBlue}{RGB}{0,40,85}
+\definecolor{wvuGold}{RGB}{234,170,0}
+\definecolor{codebg}{RGB}{247,248,250}
+\definecolor{codeframe}{RGB}{205,210,216}
+\definecolor{codecomment}{RGB}{55,105,65}
+\definecolor{codestring}{RGB}{145,55,45}
+\definecolor{notebg}{RGB}{247,250,253}
+
+% ============================================================
+% Hyperlinks
+% ============================================================
+\hypersetup{
+  colorlinks=true,
+  linkcolor=wvuBlue,
+  urlcolor=wvuBlue,
+  citecolor=wvuBlue,
+  pdfauthor={MAE 623: Heat Conduction},
+  pdftitle={Transient Heat Conduction in Python}
+}
+\urlstyle{same}
+
+% ============================================================
+% Paragraphs, lists, and headings
+% ============================================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+
+\setlist[itemize]{leftmargin=0.28in,itemsep=1.5pt,topsep=2.5pt}
+\setlist[enumerate]{leftmargin=0.30in,itemsep=2pt,topsep=2.5pt}
+
+\titleformat{\section}
+  {\Large\bfseries\color{wvuBlue}}
+  {\thesection.}{0.55em}{}
+\titleformat{name=\section,numberless}
+  {\Large\bfseries\color{wvuBlue}}
+  {}{0pt}{}
+\titleformat{\subsection}
+  {\large\bfseries\color{wvuBlue}}
+  {}{0pt}{}
+\titlespacing*{\section}{0pt}{12pt}{5pt}
+\titlespacing*{\subsection}{0pt}{9pt}{3pt}
+
+% ============================================================
+% Header and footer
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small MAE 623: Heat Conduction}
+\fancyhead[R]{\small Transient Heat Conduction in Python}
+\fancyfoot[C]{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+% ============================================================
+% Tables
+% ============================================================
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\renewcommand{\arraystretch}{1.14}
+
+% ============================================================
+% Code listings
+% ============================================================
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{wvuBlue},
+  commentstyle=\color{codecomment},
+  stringstyle=\color{codestring},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{codeframe},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  tabsize=4,
+  xleftmargin=0.01\linewidth,
+  xrightmargin=0.01\linewidth,
+  framexleftmargin=5pt,
+  framexrightmargin=5pt,
+  aboveskip=5pt,
+  belowskip=5pt
+}
+
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{codeframe},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  xleftmargin=0.01\linewidth,
+  xrightmargin=0.01\linewidth,
+  framexleftmargin=5pt,
+  framexrightmargin=5pt,
+  aboveskip=5pt,
+  belowskip=5pt
+}
+
+\lstset{style=python}
+
+% ============================================================
+% Reusable notation and callout boxes
+% ============================================================
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Bi}{\mathrm{Bi}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+
+\newtcolorbox{guidebox}[1][]{
+  enhanced,
+  breakable,
+  colback=notebg,
+  colframe=wvuBlue!55,
+  boxrule=0.6pt,
+  arc=1.5mm,
+  left=8pt,
+  right=8pt,
+  top=7pt,
+  bottom=7pt,
+  before skip=7pt,
+  after skip=8pt,
+  #1
+}
+
+\begin{document}
+
+% ============================================================
+% Title block
+% ============================================================
+\begin{center}
+  {\LARGE\bfseries\color{wvuBlue} Transient Heat Conduction in Python}\par
+  \vspace{4pt}
+  {\large A Student Guide to Explicit and Implicit Methods}\par
+  \vspace{1pt}
+  {\large and Changing Boundary Conditions}\par
+  \vspace{5pt}
+  {\normalsize Companion to the two one-dimensional example scripts}\par
+  \vspace{8pt}
+  {\color{wvuGold}\rule{\textwidth}{1.1pt}}
+\end{center}
+\vspace{2pt}
+\section*{What you will learn}
+
+This guide connects the heat equation to the calculations in
+\code{transient_1d_explicit.py} and \code{transient_1d_implicit.py}.
+No previous Python programming experience is assumed.
+
+\begin{guidebox}
+By the end of the guide, you should be able to:
+\begin{itemize}
+  \item interpret the arrays, indexing, and time-stepping loops used in both scripts;
+  \item explain why the explicit method updates temperatures directly while the implicit method solves a system of simultaneous equations; and
+  \item replace a fixed-temperature boundary with a specified heat flux, insulation, or convection boundary condition.
+\end{itemize}
+\end{guidebox}
+
+\begin{guidebox}
+\textbf{Use this guide with copies of the scripts.}
+The programs currently hold the left end at $100\,^{\circ}\mathrm C$ and the right end at
+$20\,^{\circ}\mathrm C$. The worked boundary changes replace the right condition while retaining the fixed left temperature. These boundary recipes are alternatives, so apply one recipe at a time. The original scripts are not modified by this document.
+\end{guidebox}
+
+
+\section{Run a script and find the inputs}
+Install Python 3 from \url{https://www.python.org/downloads/} if needed.
+On Windows, select the installer option to add Python to PATH.
+Save both Python files in a folder. Open that folder in File Explorer,
+type \code{cmd} in its address bar, and press Enter. In that command
+window, install the packages once and run either script:
+\begin{lstlisting}[style=terminal]
+python -m pip install numpy matplotlib
+python transient_1d_explicit.py
+python transient_1d_implicit.py
+\end{lstlisting}
+Run the commands one at a time when comparing timings. Each program prints
+its solver time and saves a contour PNG beside the script; no plot window
+opens. The batch launcher runs both programs concurrently, which can affect
+timings. Edit code in a plain-text editor, save it, and rerun the command.
+
+
+The editable inputs are near the top of each script. Use the same physical
+inputs and grid in both files for a direct comparison. The current settings
+are $k=45\ \mathrm{W/(m\,K)}$, $\rho=7800\ \mathrm{kg/m^3}$,
+$c_p=500\ \mathrm{J/(kg\,K)}$, $L=0.10\ \mathrm m$, 201 nodes,
+$\Delta t=0.005\ \mathrm s$, and a final time of $300\ \mathrm s$.
+For quicker practice with boundary changes, use 51 nodes and
+\code{dt = 0.1} in both copies; this also satisfies the original explicit
+stability limit.
+
+
+\section{The physical equation and the grid}
+For a uniform rod with constant properties, no internal heat generation,
+and no heat loss through its sides,
+\begin{equation}
+ \rho c_p\frac{\partial T}{\partial t}
+ =k\frac{\partial^2T}{\partial x^2},\qquad
+ \frac{\partial T}{\partial t}
+ =\alpha\frac{\partial^2T}{\partial x^2},\qquad
+ \alpha=\frac{k}{\rho c_p}.
+\end{equation}
+The left side describes heat storage; the right side describes the net
+effect of conduction. Thermal diffusivity $\alpha$ has units of
+$\mathrm{m^2/s}$. Larger diffusivity makes temperature differences spread
+through the rod more quickly.
+
+
+Let $N=\code{number_of_nodes}-1$. Nodes are numbered $i=0,1,\ldots,N$,
+so there are $N+1$ nodes but only $N$ intervals:
+\[
+ x_i=i\Delta x,\quad \Delta x=L/N,\qquad
+ t_n=n\Delta t,\qquad T_i^n\approx T(x_i,t_n).
+\]
+The superscript $n$ labels a time; it is \emph{not} a power. The subscript
+$i$ labels a position. Interior nodes have $1\le i\le N-1$.
+The dimensionless Fourier number is
+\[
+ \Fo=\frac{\alpha\Delta t}{\Delta x^2}.
+\]
+With the current inputs, $\alpha\approx1.15385\times10^{-5}\ \mathrm{m^2/s}$,
+$\Delta x=0.0005\ \mathrm m$, and $\Fo\approx0.230769$.
+
+
+\subsection*{How the symbols become Python}
+\begin{lstlisting}
+alpha = k / (rho * cp)          # * multiplies; / divides
+dx = L / (number_of_nodes - 1)
+Fo = alpha * dt / dx**2         # **2 means squared
+x = np.linspace(0.0, L, number_of_nodes)
+time = np.arange(number_of_steps + 1) * dt
+T_history = np.zeros((number_of_steps + 1, number_of_nodes))
+\end{lstlisting}
+\code{np} is the short name given to NumPy. An array is an organized
+collection of numbers. Here, each row of \code{T_history} is a saved time
+and each column is a position. Thus $T_i^n$ is \code{T_history[n, i]}.
+There are 60,001 rows and 201 columns in the current full history, including
+time zero. The temperature array alone occupies about 96 MB; plotting
+uses additional memory.
+
+
+\begin{center}
+\small
+\begin{tabularx}{0.95\linewidth}{@{}P{0.33\linewidth}Y@{}}
+\toprule
+\textbf{Python expression} & \textbf{Meaning} \\
+\midrule
+\code{T_history[0, :]} & Initial temperatures at all positions \\
+\code{T_history[n, :]} & All temperatures at saved time $n$ \\
+\code{T_history[:, 0]} & Left-end temperature at every time \\
+\code{T_history[:, -1]} & Right-end temperature at every time \\
+\code{T_history[n, -2]} & Node next to the right end at time $n$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Python starts counting at zero. A colon selects all entries along an
+array direction. Negative indices count backward: $-1$ is last, $-2$ is
+next to last. Do not confuse Python index \code{-1} with a ghost node.
+
+
+\section{Explicit FTCS: calculate from the old temperatures}
+Approximate the spatial curvature by the centered difference
+\[
+ \left.\frac{\partial^2T}{\partial x^2}\right|_{i,n}
+ \approx \frac{T_{i-1}^n-2T_i^n+T_{i+1}^n}{\Delta x^2}.
+\]
+Use a forward difference for the time derivative and evaluate the
+curvature at the old time $n$:
+\[
+ \frac{T_i^{n+1}-T_i^n}{\Delta t}
+ =\alpha\frac{T_{i-1}^n-2T_i^n+T_{i+1}^n}{\Delta x^2}.
+\]
+Rearranging gives the forward-time, centered-space (FTCS) update:
+\begin{equation}\label{eq:explicit}
+ \boxed{T_i^{n+1}=T_i^n+\Fo(T_{i-1}^n-2T_i^n+T_{i+1}^n).}
+\end{equation}
+Every quantity on the right is known. For example, with $\Fo=0.25$
+and old left, center, and right temperatures $80,40,20\,^{\circ}\mathrm C$,
+the new center temperature is $40+0.25(80-80+20)=45\,^{\circ}\mathrm C$.
+
+
+\begin{lstlisting}
+for n in range(number_of_steps):
+    for i in range(1, number_of_nodes - 1):
+        T_history[n + 1, i] = T_history[n, i] + Fo * (
+            T_history[n, i - 1]
+            - 2.0 * T_history[n, i]
+            + T_history[n, i + 1]
+        )
+\end{lstlisting}
+\code{for} repeats the indented instructions. \code{range(a, b)} produces
+integers starting at \code{a} and stopping \emph{before} \code{b}.
+The outer loop advances time. The inner loop updates interior nodes only.
+Indentation is part of Python's syntax: use four spaces per level.
+The right side reads row \code{n}; the left side writes row \code{n + 1}.
+Changing row \code{n} in place would mix old and new temperatures and
+would no longer be this method.
+
+
+\subsection*{Why the time step is limited}
+Equation~\eqref{eq:explicit} can be written
+\[
+ T_i^{n+1}=\Fo T_{i-1}^n+(1-2\Fo)T_i^n+\Fo T_{i+1}^n.
+\]
+For $0\le\Fo\le1/2$, the weights are nonnegative and sum to one:
+the update is a weighted average. The standard one-dimensional FTCS
+scheme with fixed end temperatures requires
+\[
+ \Fo\le\tfrac12,\qquad \Delta t\le\frac{\Delta x^2}{2\alpha}.
+\]
+The scripts stop if this condition is violated. Halving $\Delta x$ requires
+reducing $\Delta t$ by a factor of four to keep the same Fourier number.
+Refining the grid therefore increases both the nodes per step and the
+number of steps. A convection boundary introduces an additional restriction
+described later.
+
+
+\section{Implicit Backward Euler: solve for the new temperatures}
+Backward Euler evaluates spatial curvature at the \emph{new} time:
+\[
+ \frac{T_i^{n+1}-T_i^n}{\Delta t}
+ =\alpha\frac{T_{i-1}^{n+1}-2T_i^{n+1}+T_{i+1}^{n+1}}{\Delta x^2}.
+\]
+Collecting the new temperatures on the left gives
+\begin{equation}\label{eq:implicit}
+ \boxed{-\Fo T_{i-1}^{n+1}+(1+2\Fo)T_i^{n+1}
+        -\Fo T_{i+1}^{n+1}=T_i^n.}
+\end{equation}
+The new neighbors are unknown too. Solve all these equations together as
+$A\mathbf T^{n+1}=\mathbf b$. For a five-node illustration, including the
+two fixed endpoints, let $d=1+2\Fo$:
+\[
+\begin{bmatrix}
+1&0&0&0&0\\
+-\Fo&d&-\Fo&0&0\\
+0&-\Fo&d&-\Fo&0\\
+0&0&-\Fo&d&-\Fo\\
+0&0&0&0&1
+\end{bmatrix}
+\begin{bmatrix}T_0^{n+1}\\T_1^{n+1}\\T_2^{n+1}\\T_3^{n+1}\\T_4^{n+1}\end{bmatrix}
+=\begin{bmatrix}T_{\mathrm{left}}\\T_1^n\\T_2^n\\T_3^n\\T_{\mathrm{right}}\end{bmatrix}.
+\]
+The matrix is tridiagonal: only its main diagonal and the two neighboring
+diagonals can contain nonzero entries. The example stores it as an ordinary
+NumPy array for readability.
+\begin{lstlisting}
+A = np.zeros((number_of_nodes, number_of_nodes))
+for i in range(1, number_of_nodes - 1):
+    A[i, i - 1] = -Fo
+    A[i, i] = 1.0 + 2.0 * Fo
+    A[i, i + 1] = -Fo
+A[0, 0] = 1.0
+A[-1, -1] = 1.0
+
+
+for n in range(number_of_steps):
+    b = T_history[n, :].copy()
+    b[0] = T_left
+    b[-1] = T_right
+    T_history[n + 1, :] = np.linalg.solve(A, b)
+\end{lstlisting}
+\code{A[i, j]} is the coefficient of unknown $j$ in equation $i$.
+\code{copy()} makes an independent array so changing \code{b} does not
+overwrite the old temperature row. \code{np.linalg.solve(A, b)} returns
+the entire new row. There is no need to calculate a matrix inverse.
+
+
+\section{Compare methods and recognize fixed boundaries}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{@{}P{0.22\linewidth}Y Y@{}}
+\toprule
+\textbf{Feature} & \textbf{Explicit FTCS} & \textbf{Implicit Backward Euler} \\
+\midrule
+Neighbors used & Old time $n$ & New time $n+1$ \\
+Work each step & Direct temperature updates & Simultaneous linear solve \\
+Stability for the original problem & Requires $\Fo\le0.5$ & Stable for any positive $\Delta t$ \\
+Interior accuracy for smooth solutions & First order in time; second order in space & First order in time; second order in space \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Unconditional stability does not mean unconditional accuracy. A large
+implicit time step can smooth away a rapid transient. Both methods should
+approach the same physical solution as space and time steps are reduced.
+The sudden initial change at the left end is not smooth, so early-time
+errors can be larger than later-time errors.
+
+
+The printed time measures solver setup and time advancement, excluding
+imports, shared grid/history allocation, and plotting. The explicit code
+uses Python loops; the implicit code calls a dense NumPy solver at every
+step. These timings compare the supplied implementations. A specialized
+tridiagonal algorithm would change the implicit cost substantially.
+
+
+\subsection*{Dirichlet means the temperature itself is prescribed}
+The original boundary equations are
+\[
+ T_0^n=T_{\mathrm{left}},\qquad T_N^n=T_{\mathrm{right}}.
+\]
+In both scripts, the initialization block is
+\begin{lstlisting}
+T_history[0, :] = T_initial
+T_history[:, 0] = T_left
+T_history[:, -1] = T_right
+\end{lstlisting}
+The last two lines fill entire columns. Thus the endpoint values override
+the uniform initial temperature at time zero. Physically, the left surface
+is suddenly raised to $100\,^{\circ}\mathrm C$, while the interior starts
+at $20\,^{\circ}\mathrm C$.
+
+
+The explicit loop leaves these columns alone. The implicit code also
+enforces them with identity matrix rows and the right-hand-side values
+\code{b[0]} and \code{b[-1]}. To change a fixed right boundary, remove
+\emph{all} of its fixed-temperature enforcement, not just one line.
+
+
+\subsection*{A safe editing workflow}
+Make a copy of the appropriate file and choose one right-boundary recipe
+on the following pages. Replace the identified statements instead of
+appending a second solver loop. Keep the grid, interior equations, timing
+statements, and plotting section. A line beginning with \code{#} is a
+comment; Python ignores it. Pasting an equation into a comment explains
+it but does not change the calculation.
+
+
+\section{Boundary physics: flux, insulation, and convection}
+Take $x$ positive from left to right. At the right end, positive outward
+heat flux removes heat from the rod:
+\[
+ -k\left.\frac{\partial T}{\partial x}\right|_L=q_{\mathrm{out}}.
+\]
+A negative $q_{\mathrm{out}}$ adds heat there. Insulation is the special
+case $q_{\mathrm{out}}=0$. A specified flux determines a temperature
+\emph{gradient}; it does not fix the surface temperature.
+
+
+For convection at the right end,
+\[
+ q_{\mathrm{out}}=h(T_N-T_\infty),\qquad
+ \Bi=\frac{h\Delta x}{k}.
+\]
+Here $h\ge0$ is the convection coefficient in $\mathrm{W/(m^2\,K)}$,
+and $T_\infty$ is the surrounding fluid temperature. This $\Bi$ is a
+\emph{mesh} Biot number based on $\Delta x$. A surface hotter than the
+fluid loses heat; a colder surface gains heat.
+
+
+\subsection*{Where the factor of two comes from}
+Introduce a fictitious node $N+1$ just outside the right surface. A centered
+approximation to the flux gives
+\[
+ -k\frac{T_{N+1}-T_{N-1}}{2\Delta x}=q_{\mathrm{out}}
+ \quad\Longrightarrow\quad
+ T_{N+1}=T_{N-1}-\frac{2\Delta x}{k}q_{\mathrm{out}}.
+\]
+Substituting this into the surface heat equation gives
+\begin{equation}\label{eq:surface}
+ \frac{dT_N}{dt}
+ =\frac{2\alpha}{\Delta x^2}
+ \left(T_{N-1}-T_N-\frac{\Delta x}{k}q_{\mathrm{out}}\right).
+\end{equation}
+The same expression follows from an energy balance on a half-width end
+cell. Per unit cross-sectional area, its heat capacity is
+$\rho c_p\Delta x/2$, and its net heat input is
+$k(T_{N-1}-T_N)/\Delta x-q_{\mathrm{out}}$.
+The factor of two reflects that smaller end-cell volume. The ghost node
+is eliminated algebraically; no extra array element is required.
+
+
+\subsection*{Two choices of time level}
+For explicit FTCS, evaluate the parentheses in
+Equation~\eqref{eq:surface} at time $n$. For Backward Euler, evaluate
+them at $n+1$ and move unknown temperatures to the matrix side.
+Insulation therefore does \emph{not} require overwriting the surface
+temperature with the adjacent node's value: the surface retains heat
+capacity and receives its own update.
+
+
+\clearpage
+\section{Recipe A: specified right heat flux or insulation}
+\textbf{Inputs for either method.} Near the other physical inputs, add:
+\begin{lstlisting}[label=lst:fluxinput]
+q_flux = 1000.0  # W/m^2, positive OUT of the right end
+\end{lstlisting}
+Use \code{q_flux = 0.0} for insulation. For the modified right surface,
+delete \code{T_history[:, -1] = T_right} in the initialization block.
+Keep \code{T_history[0, :] = T_initial} and
+\code{T_history[:, 0] = T_left}. The initial right temperature is now
+\code{T_initial}; its later values will be calculated.
+
+
+\subsection*{Explicit file: replace its entire time loop with this block}
+From Equation~\eqref{eq:surface},
+\[
+ T_N^{n+1}=T_N^n+2\Fo
+ \left(T_{N-1}^n-T_N^n-\frac{\Delta x}{k}q_{\mathrm{flux}}\right).
+\]
+\begin{lstlisting}[label=lst:explicitflux]
+for n in range(number_of_steps):
+    for i in range(1, number_of_nodes - 1):
+        T_history[n + 1, i] = T_history[n, i] + Fo * (
+            T_history[n, i - 1]
+            - 2.0 * T_history[n, i]
+            + T_history[n, i + 1]
+        )
+    # Inside the time loop, OUTSIDE the spatial loop:
+    T_history[n + 1, -1] = T_history[n, -1] + 2.0 * Fo * (
+        T_history[n, -2] - T_history[n, -1]
+        - dx * q_flux / k
+    )
+\end{lstlisting}
+Keep \code{solver_start} before this loop and \code{solver_seconds}
+after it. The original $\Fo\le0.5$ check remains suitable for this
+specified-flux update.
+
+
+\subsection*{Implicit file: change the last matrix row and its right side}
+The new surface equation is
+\[
+ -2\Fo T_{N-1}^{n+1}+(1+2\Fo)T_N^{n+1}
+ =T_N^n-2\Fo\frac{\Delta x}{k}q_{\mathrm{flux}}.
+\]
+Replace \code{A[-1, -1] = 1.0} before the time loop with
+\begin{lstlisting}[label=lst:implicitfluxmatrix]
+A[-1, :] = 0.0  # Clear the entire old boundary row.
+A[-1, -2] = -2.0 * Fo
+A[-1, -1] = 1.0 + 2.0 * Fo
+\end{lstlisting}
+Inside the time loop, replace \code{b[-1] = T_right} with the following
+line, indented four spaces like \code{b[0] = T_left}:
+\begin{lstlisting}[label=lst:implicitfluxrhs]
+    b[-1] = T_history[n, -1] - 2.0 * Fo * dx * q_flux / k
+\end{lstlisting}
+Keep the interior matrix rows and the left boundary row as written.
+Inside the time loop, also keep \code{b = T_history[n, :].copy()} and the call to
+\code{np.linalg.solve(A,b)}.
+
+
+\clearpage
+\section{Recipe B: convection at the right surface}
+Start from a copy with the original fixed boundaries, not a mixture of
+Recipes A and B. Add these inputs near the top:
+\begin{lstlisting}[label=lst:robininput]
+h = 100.0          # W/(m^2 K), convection coefficient
+T_infinity = 20.0  # deg C, surrounding fluid temperature
+\end{lstlisting}
+After \code{dx} and \code{Fo} have been calculated, add
+\begin{lstlisting}[label=lst:biot]
+if h < 0:
+    raise ValueError("h must be nonnegative.")
+Bi = h * dx / k
+\end{lstlisting}
+Delete \code{T_history[:, -1] = T_right} from initialization, leaving
+the right surface initially at \code{T_initial}.
+
+
+\subsection*{Explicit update and its extra stability check}
+Substitute $q_{\mathrm{out}}^n=h(T_N^n-T_\infty)$ into the flux update:
+\[
+ T_N^{n+1}=T_N^n+2\Fo
+ \left[T_{N-1}^n-(1+\Bi)T_N^n+\Bi T_\infty\right].
+\]
+Use the full explicit loop from Recipe A, but replace its last surface
+assignment with this block (including the shown indentation):
+\begin{lstlisting}[label=lst:explicitrobin]
+    T_history[n + 1, -1] = T_history[n, -1] + 2.0 * Fo * (
+        T_history[n, -2] - (1.0 + Bi) * T_history[n, -1]
+        + Bi * T_infinity
+    )
+\end{lstlisting}
+Do not also use \code{q_flux} at this boundary. The coefficient of the
+old surface temperature is $1-2\Fo(1+\Bi)$. A sufficient stability
+restriction giving nonnegative update coefficients is
+\[
+ \Fo\le\frac{1}{2(1+\Bi)}.
+\]
+After defining \code{Bi}, add the following check before the time loop.
+The existing interior check can stay in place.
+\begin{lstlisting}[label=lst:robincheck]
+Fo_limit = 1.0 / (2.0 * (1.0 + Bi))
+if Fo > Fo_limit:
+    raise ValueError("Reduce dt for the convection boundary.")
+\end{lstlisting}
+For the example $h=100$ and the current fine grid, $\Bi\approx0.001111$
+and the limit is approximately $0.499445$, above the chosen $\Fo$.
+
+
+\subsection*{Implicit matrix row and right-hand side}
+Using $q_{\mathrm{out}}^{n+1}=h(T_N^{n+1}-T_\infty)$ gives
+\[
+ -2\Fo T_{N-1}^{n+1}+[1+2\Fo(1+\Bi)]T_N^{n+1}
+ =T_N^n+2\Fo\Bi T_\infty.
+\]
+Replace the original \code{A[-1, -1] = 1.0} with
+\begin{lstlisting}[label=lst:implicitrobinmatrix]
+A[-1, :] = 0.0
+A[-1, -2] = -2.0 * Fo
+A[-1, -1] = 1.0 + 2.0 * Fo * (1.0 + Bi)
+\end{lstlisting}
+Replace \code{b[-1] = T_right} inside the time loop with
+\begin{lstlisting}[label=lst:implicitrobinrhs]
+    b[-1] = T_history[n, -1] + 2.0 * Fo * Bi * T_infinity
+\end{lstlisting}
+For constant $h$, the matrix is still built once. Backward Euler does not
+need the explicit convection time-step restriction for this linear problem.
+
+
+\section{What changes at the left end?}
+The outward direction is $-x$ at the left end. Therefore, with outward
+heat flux positive,
+\[
+ q_{\mathrm{out,left}}=+k\left.\frac{\partial T}{\partial x}\right|_0,
+ \qquad +k\left.\frac{\partial T}{\partial x}\right|_0
+ =h_{\mathrm{left}}(T_0-T_{\infty,\mathrm{left}}).
+\]
+Using this outward convention, the right-surface formulas apply at the
+left with the surface index $N$ replaced by $0$ and its neighbor $N-1$
+replaced by $1$. Positive outward flux always removes heat.
+
+
+For example, to replace a fixed \emph{left} end with specified outward
+flux, define \code{q_left} near the inputs, delete
+\code{T_history[:, 0] = T_left}, and initialize the left surface with
+\code{T_initial}. In the explicit time loop, outside its inner loop, use
+\begin{lstlisting}
+    T_history[n + 1, 0] = T_history[n, 0] + 2.0 * Fo * (
+        T_history[n, 1] - T_history[n, 0] - dx * q_left / k
+    )
+\end{lstlisting}
+In the implicit code, replace \code{A[0, 0] = 1.0} with
+\begin{lstlisting}
+A[0, :] = 0.0
+A[0, 0] = 1.0 + 2.0 * Fo
+A[0, 1] = -2.0 * Fo
+\end{lstlisting}
+and replace \code{b[0] = T_left} with
+\begin{lstlisting}
+    b[0] = T_history[n, 0] - 2.0 * Fo * dx * q_left / k
+\end{lstlisting}
+For left convection, define \code{Bi_left = h_left * dx / k}. The explicit
+parentheses become
+$T_1^n-(1+\Bi_{\mathrm{left}})T_0^n+
+\Bi_{\mathrm{left}}T_{\infty,\mathrm{left}}$.
+The implicit main-diagonal coefficient becomes
+$1+2\Fo(1+\Bi_{\mathrm{left}})$ and
+$b_0=T_0^n+2\Fo\Bi_{\mathrm{left}}T_{\infty,\mathrm{left}}$.
+If both ends convect, apply the explicit restriction for both ends, using
+the smaller allowable Fourier number.
+
+
+\textbf{Do not silently change flux conventions.} If a problem instead
+defines left flux by $-k\,\partial T/\partial x=q_x$, positive $q_x$
+points into the rod. In that case $q_{\mathrm{out,left}}=-q_x$, so the
+left flux contribution has a plus sign. State the convention before editing.
+
+
+\section{Keep the contour colors consistent with the new problem}
+After changing a boundary, \code{T_right} or \code{T_left} may no longer
+control that surface. Flux or a different ambient temperature may also
+produce temperatures outside the original $20$--$100\,^{\circ}\mathrm C$
+range. In the plotting section, replace the two original min/max lines by
+\begin{lstlisting}[label=lst:plotrange]
+T_min = float(np.min(T_history))
+T_max = float(np.max(T_history))
+\end{lstlisting}
+Keep the uniform-temperature fallback, \code{levels}, \code{contourf},
+and PNG saving code. This covers all computed values. For side-by-side
+method comparisons, choose identical color limits covering both results.
+The plot's vertical axis is \emph{time}, not a second spatial direction.
+
+
+\section{Checks that tell you whether an edit makes sense}
+\subsection*{Check against a steady solution}
+At steady state, the temperature is a straight line because
+$d^2T/dx^2=0$. With left temperature fixed, the following targets are useful:
+\begin{align*}
+\text{Fixed right temperature:}\quad
+ T(x)&=T_{\mathrm{left}}+
+ (T_{\mathrm{right}}-T_{\mathrm{left}})\frac{x}{L},\\
+\text{Specified right outward flux:}\quad
+ T(x)&=T_{\mathrm{left}}-\frac{q_{\mathrm{flux}}}{k}x,\\
+\text{Right convection:}\quad
+ q_{\mathrm{steady}}&=
+ \frac{T_{\mathrm{left}}-T_\infty}{L/k+1/h},\qquad h>0,\\
+ T(x)&=T_{\mathrm{left}}-\frac{q_{\mathrm{steady}}}{k}x.
+\end{align*}
+For an insulated right end, the eventual temperature is uniformly
+$T_{\mathrm{left}}$. For the example flux $1000\ \mathrm{W/m^2}$,
+the steady right temperature is approximately $97.78\,^{\circ}\mathrm C$.
+For $h=100\ \mathrm{W/(m^2\,K)}$ and $T_\infty=20\,^{\circ}\mathrm C$,
+it is approximately $85.45\,^{\circ}\mathrm C$.
+These are \emph{long-time} targets, not temperatures guaranteed at 300 s.
+Increase \code{total_time} and check whether later profiles stop changing.
+
+
+\subsection*{Simple experiments}
+\begin{enumerate}
+\item Set both fixed temperatures and the initial temperature equal.
+      Both methods should retain a uniform temperature at every time.
+\item Set the right flux to zero with the left end held hot. The right
+      temperature should evolve; it should not stay fixed at its old value.
+\item Set $h=0$ in the convection recipe. Its equations should become
+      exactly the insulated-boundary equations.
+\item Use a positive right outward flux. Reversing its sign should reverse
+      the direction of that boundary's imposed heat transfer.
+\item Reduce $\Delta x$ and $\Delta t$ consistently in both methods.
+      Compare temperatures at the same physical position and time;
+      their difference should decrease as the solution is resolved.
+\end{enumerate}
+
+
+\subsection*{Common beginner errors and their fixes}
+
+\textbf{The new boundary remains fixed.}
+Remove its whole-column assignment. In the implicit file, also replace its
+matrix row and its \code{b} entry.
+
+\textbf{IndentationError.}
+Use spaces consistently. A boundary update belongs inside the time loop, at
+the same indentation as \code{for i}, not inside the spatial loop. An implicit
+\code{b} change belongs before the solve.
+
+\textbf{NameError.}
+Define new inputs before using them, and define \code{Bi} after \code{dx}.
+Python runs the file from top to bottom.
+
+\textbf{Temperatures oscillate or explode.}
+Recheck the explicit time-step restriction, including convection, and make
+sure all right-side values use the old time row.
+
+\textbf{The image has blank temperature bands.}
+Use the updated plotting limits from the preceding section so the levels cover
+the computed range.
+
+Save the file after each edit. Read the last line of a Python error message
+first. It often identifies the problem and points to the relevant line.
+\end{document}
+
+

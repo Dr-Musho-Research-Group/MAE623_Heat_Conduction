@@ -1,0 +1,1160 @@
+```latex
+\documentclass[11pt]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+
+\usepackage[letterpaper,
+    top=0.72in,
+    bottom=0.72in,
+    left=0.80in,
+    right=0.80in]{geometry}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+% ============================================================
+% Colors
+% ============================================================
+
+\definecolor{wvuBlue}{RGB}{0,40,85}
+\definecolor{codeBackground}{RGB}{247,247,247}
+\definecolor{codeBorder}{RGB}{190,190,190}
+\definecolor{codeComment}{RGB}{80,110,80}
+\definecolor{codeKeyword}{RGB}{25,70,130}
+\definecolor{codeString}{RGB}{130,60,40}
+
+% ============================================================
+% Hyperlinks
+% ============================================================
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=wvuBlue,
+    urlcolor=wvuBlue,
+    citecolor=wvuBlue,
+    pdfauthor={West Virginia University},
+    pdftitle={Python and Conda Setup for Numerical Heat Conduction}
+}
+
+\urlstyle{same}
+
+% ============================================================
+% General page formatting
+% ============================================================
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\headheight}{14pt}
+\raggedbottom
+
+\setlist[itemize]{
+    leftmargin=0.28in,
+    itemsep=2pt,
+    topsep=3pt
+}
+
+\setlist[enumerate]{
+    leftmargin=0.30in,
+    itemsep=3pt,
+    topsep=3pt
+}
+
+% ============================================================
+% Header and footer
+% ============================================================
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{\small MAE 623: Heat Conduction}
+\fancyhead[R]{\small Python Setup Guide}
+
+\fancyfoot[C]{\small \thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ============================================================
+% Section formatting
+% ============================================================
+
+\titleformat{\section}
+  {\Large\bfseries\color{wvuBlue}}
+  {}
+  {0pt}
+  {}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{wvuBlue}}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\section}
+  {0pt}{0pt}{8pt}
+
+\titlespacing*{\subsection}
+  {0pt}{13pt}{4pt}
+
+% ============================================================
+% Table column definitions
+% ============================================================
+
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+% ============================================================
+% Listings: command prompt
+% ============================================================
+
+\lstdefinestyle{terminal}{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codeBackground},
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{codeBorder},
+    showstringspaces=false,
+    columns=fullflexible,
+    keepspaces=true,
+    breaklines=true,
+    xleftmargin=0.02\linewidth,
+    xrightmargin=0.02\linewidth,
+    framexleftmargin=5pt,
+    framexrightmargin=5pt,
+    aboveskip=6pt,
+    belowskip=7pt
+}
+
+% ============================================================
+% Listings: Python
+% ============================================================
+
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codeBackground},
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{codeBorder},
+    keywordstyle=\color{codeKeyword},
+    commentstyle=\color{codeComment},
+    stringstyle=\color{codeString},
+    showstringspaces=false,
+    columns=fullflexible,
+    keepspaces=true,
+    breaklines=true,
+    xleftmargin=0.02\linewidth,
+    xrightmargin=0.02\linewidth,
+    framexleftmargin=5pt,
+    framexrightmargin=5pt,
+    aboveskip=6pt,
+    belowskip=7pt
+}
+
+\lstset{style=terminal}
+
+% ============================================================
+% Document
+% ============================================================
+
+\begin{document}
+
+% ============================================================
+% Title block
+% ============================================================
+
+\begin{center}
+
+    {\LARGE\bfseries\color{wvuBlue}
+    Python and Conda Setup}
+
+    \vspace{3pt}
+
+    {\large Numerical Heat Conduction Assignments}
+
+    \vspace{2pt}
+
+    {\normalsize MAE 623: Heat Conduction}
+
+    \vspace{7pt}
+
+    \rule{\textwidth}{0.7pt}
+
+\end{center}
+
+\vspace{4pt}
+
+The numerical assignments in this course will use Python for scientific
+computing, numerical methods, and plotting. The purpose of this guide is
+to take you from a computer with no Python setup to a working Python
+environment in which you can execute the example programs provided with
+the assignments.
+
+You do not need previous Python experience to complete the introductory
+assignments. If you are familiar with MATLAB, many of the ideas will look
+familiar. Python uses variables, arrays, loops, functions, matrix
+operations, and plotting in much the same way.
+
+The primary scientific Python packages used in this course will be:
+
+\begin{itemize}
+    \item \texttt{NumPy} for numerical arrays, matrix operations, and
+          numerical calculations;
+    \item \texttt{Matplotlib} for plotting and saving figures;
+    \item \texttt{SciPy} for additional scientific and numerical
+          algorithms.
+\end{itemize}
+
+Assignments will generally be provided as Python scripts with filenames
+ending in \texttt{.py}. For example, a transient heat-conduction
+assignment may contain
+
+\begin{lstlisting}
+transient_1d_explicit.py
+transient_1d_implicit.py
+\end{lstlisting}
+
+These files are complete Python programs. You will typically modify
+physical parameters or numerical settings near the beginning of the
+file and then execute the script from a command window.
+
+% ============================================================
+\subsection*{1. Install Anaconda or Miniconda}
+% ============================================================
+
+Python can be installed in several ways. For this course, the recommended
+approach is to use \textbf{Conda}. Conda manages Python itself as well as
+the scientific packages required by the assignments.
+
+You may use either:
+
+\begin{itemize}
+    \item \textbf{Anaconda Distribution}, which includes Python and many
+          commonly used scientific packages; or
+    \item \textbf{Miniconda}, which is a smaller installation containing
+          Conda and Python. Additional scientific packages are installed
+          as needed.
+\end{itemize}
+
+Either option is acceptable.
+
+For Anaconda, download the installer from
+
+\begin{center}
+\href{https://www.anaconda.com/download}
+     {https://www.anaconda.com/download}
+\end{center}
+
+For Miniconda, see
+
+\begin{center}
+\href{https://docs.conda.io/projects/miniconda/en/latest/}
+     {https://docs.conda.io/projects/miniconda/en/latest/}
+\end{center}
+
+On Windows, a normal ``Just Me'' installation using the default options
+is generally appropriate. You do not need to make Anaconda or Miniconda
+the system-wide Python installation.
+
+After installation, open the Windows Start menu and search for
+
+\begin{center}
+\textbf{Anaconda Prompt}
+\end{center}
+
+or, when using Miniconda,
+
+\begin{center}
+\textbf{Anaconda Prompt (Miniconda3)}
+\end{center}
+
+This command window will be used to create the course environment and
+execute Python scripts.
+
+On macOS or Linux, the normal Terminal application can be used after
+Conda has been installed.
+
+% ============================================================
+\subsection*{2. Verify That Conda Is Working}
+% ============================================================
+
+Open the Anaconda Prompt or terminal and enter
+
+\begin{lstlisting}
+conda --version
+\end{lstlisting}
+
+You should see a Conda version number.
+
+You can also enter
+
+\begin{lstlisting}
+conda info
+\end{lstlisting}
+
+If these commands execute without an error, Conda is installed correctly.
+
+% ============================================================
+\subsection*{3. What Is a Conda Environment?}
+% ============================================================
+
+A Conda \textit{environment} is an isolated Python installation used for
+a particular course, research project, or application.
+
+Using a separate environment prevents packages required by one project
+from interfering with packages required by another project. It also
+makes the computational environment easier to reproduce.
+
+For this course, create an environment named
+
+\begin{center}
+\texttt{heat\_conduction}
+\end{center}
+
+You only need to create this environment \textbf{once}. After it has
+been created, you simply activate it whenever you work on an assignment.
+
+It is good practice to avoid installing course-specific packages directly
+into the Conda \texttt{base} environment.
+
+% ============================================================
+\subsection*{4. Create the Course Python Environment}
+% ============================================================
+
+Open the Anaconda Prompt and enter
+
+\begin{lstlisting}
+conda create -n heat_conduction python=3.12 numpy matplotlib scipy
+\end{lstlisting}
+
+Conda will display the packages that will be installed and ask something
+similar to
+
+\begin{lstlisting}
+Proceed ([y]/n)?
+\end{lstlisting}
+
+Type
+
+\begin{lstlisting}
+y
+\end{lstlisting}
+
+and press Enter.
+
+The environment will now contain Python together with the principal
+scientific packages required for the numerical examples.
+
+After installation is complete, activate the environment:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+The beginning of the command prompt should now contain
+
+\begin{lstlisting}
+(heat_conduction)
+\end{lstlisting}
+
+For example, a Windows prompt may look similar to
+
+\begin{lstlisting}
+(heat_conduction) C:\Users\YourName>
+\end{lstlisting}
+
+This indicates that commands such as \texttt{python} will use the Python
+installation inside the course environment.
+
+% ============================================================
+\subsection*{5. Verify the Python Installation}
+% ============================================================
+
+With the \texttt{heat\_conduction} environment active, enter
+
+\begin{lstlisting}
+python --version
+\end{lstlisting}
+
+You should see Python 3.12 or a compatible version.
+
+On Windows, determine which Python executable is being used with
+
+\begin{lstlisting}
+where python
+\end{lstlisting}
+
+The first location listed should contain the
+\texttt{heat\_conduction} environment.
+
+On macOS or Linux, use
+
+\begin{lstlisting}
+which python
+\end{lstlisting}
+
+You can also verify that NumPy, Matplotlib, and SciPy are available:
+
+\begin{lstlisting}
+python -c "import numpy, matplotlib, scipy; print('Python environment is ready.')"
+\end{lstlisting}
+
+If everything is installed correctly, you should see
+
+\begin{lstlisting}
+Python environment is ready.
+\end{lstlisting}
+
+% ============================================================
+\subsection*{6. Basic Command-Window Skills}
+% ============================================================
+
+The command window is simply another way to tell the computer which
+folder you are working in and which program you want to execute.
+
+Only a small number of commands are needed for this course.
+
+\begin{center}
+
+{\small
+\renewcommand{\arraystretch}{1.18}
+
+\begin{tabularx}{0.96\linewidth}{@{}P{1.80in}Y@{}}
+
+\toprule
+
+\textbf{Command} & \textbf{What it does} \\
+
+\midrule
+
+\texttt{dir}
+&
+Lists files and folders in the current folder on Windows.
+\\
+
+\texttt{cd foldername}
+&
+Moves into a folder.
+\\
+
+\texttt{cd ..}
+&
+Moves up one folder level.
+\\
+
+\texttt{cd /d "C:\textbackslash path"}
+&
+Moves directly to a Windows folder, including a folder on another drive.
+\\
+
+\texttt{mkdir Assignment1}
+&
+Creates a new folder named \texttt{Assignment1}.
+\\
+
+\texttt{cls}
+&
+Clears the Windows command-window screen.
+\\
+
+\texttt{python file.py}
+&
+Executes the Python program named \texttt{file.py}.
+\\
+
+\texttt{where python}
+&
+Shows which Python installation Windows is currently using.
+\\
+
+\texttt{conda info --envs}
+&
+Lists the Conda environments installed on the computer.
+\\
+
+\bottomrule
+
+\end{tabularx}
+}
+
+\end{center}
+
+On macOS or Linux, the corresponding command for listing files is
+typically
+
+\begin{lstlisting}
+ls
+\end{lstlisting}
+
+and the command for identifying Python is
+
+\begin{lstlisting}
+which python
+\end{lstlisting}
+
+% ============================================================
+\subsection*{7. Create an Assignment Folder}
+% ============================================================
+
+It is useful to keep each assignment in its own folder.
+
+For example, on Windows you might create
+
+\begin{lstlisting}
+Documents\MAE623\Assignment1
+\end{lstlisting}
+
+One of the easiest ways to move to this folder from the Anaconda Prompt
+is to copy its location from Windows Explorer.
+
+\begin{enumerate}
+    \item Open the assignment folder in Windows Explorer.
+    \item Click the Explorer address bar.
+    \item Press \texttt{Ctrl+C} to copy the complete folder path.
+    \item Return to the Anaconda Prompt.
+    \item Type \texttt{cd /d } followed by the copied path inside
+          quotation marks.
+\end{enumerate}
+
+For example:
+
+\begin{lstlisting}
+cd /d "C:\Users\YOUR_USERNAME\Documents\MAE623\Assignment1"
+\end{lstlisting}
+
+Then enter
+
+\begin{lstlisting}
+dir
+\end{lstlisting}
+
+to display the files contained in the folder.
+
+The quotation marks are important when a folder name contains spaces.
+
+% ============================================================
+\subsection*{8. Python Programs Are \texttt{.py} Files}
+% ============================================================
+
+A Python program, often called a \textit{script}, is a plain-text file
+whose filename ends in
+
+\begin{lstlisting}
+.py
+\end{lstlisting}
+
+For example:
+
+\begin{lstlisting}
+transient_1d_explicit.py
+\end{lstlisting}
+
+You can edit Python files using many different programs. Examples
+include
+
+\begin{itemize}
+    \item Visual Studio Code,
+    \item Spyder,
+    \item Notepad++,
+    \item Windows Notepad,
+    \item another plain-text programming editor.
+\end{itemize}
+
+A simple text editor is sufficient for these assignments.
+
+If using Windows Notepad, make sure Windows is displaying file
+extensions. In Windows Explorer, select
+
+\begin{center}
+\textbf{View $>$ Show $>$ File name extensions}
+\end{center}
+
+When saving from Notepad, select
+
+\begin{center}
+\textbf{Save as type: All Files (*.*)}
+\end{center}
+
+and enter the complete filename, such as
+
+\begin{lstlisting}
+transient_1d_explicit.py
+\end{lstlisting}
+
+Make sure Windows has not actually created
+
+\begin{lstlisting}
+transient_1d_explicit.py.txt
+\end{lstlisting}
+
+% ============================================================
+\subsection*{9. Running a Python Script}
+% ============================================================
+
+Suppose the assignment folder contains
+
+\begin{lstlisting}
+transient_1d_explicit.py
+\end{lstlisting}
+
+First activate the course environment:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+Next move to the folder containing the Python file:
+
+\begin{lstlisting}
+cd /d "C:\Users\YOUR_USERNAME\Documents\MAE623\Assignment1"
+\end{lstlisting}
+
+Check that the file is present:
+
+\begin{lstlisting}
+dir
+\end{lstlisting}
+
+Then execute the program:
+
+\begin{lstlisting}
+python transient_1d_explicit.py
+\end{lstlisting}
+
+Python reads the file from top to bottom and executes the commands
+contained in the script.
+
+A numerical heat-conduction program may perform the following sequence:
+
+\begin{enumerate}
+    \item define the geometry and material properties;
+    \item create the spatial and temporal grids;
+    \item apply the initial and boundary conditions;
+    \item perform the numerical time integration;
+    \item store the calculated temperatures;
+    \item generate a plot;
+    \item save the plot as an image file.
+\end{enumerate}
+
+For example, after running the explicit transient-conduction program,
+your assignment folder may contain
+
+\begin{lstlisting}
+transient_1d_explicit.py
+transient_1d_explicit_surface.png
+\end{lstlisting}
+
+The \texttt{.py} file contains the program. The \texttt{.png} file is a
+figure created by the program.
+
+% ============================================================
+\subsection*{10. Explicit and Implicit Heat-Conduction Examples}
+% ============================================================
+
+For the introductory transient heat-conduction assignment, you may have
+two Python programs:
+
+\begin{lstlisting}
+transient_1d_explicit.py
+transient_1d_implicit.py
+\end{lstlisting}
+
+Both programs solve the same physical problem but use different
+numerical time-integration methods.
+
+Run the explicit program using
+
+\begin{lstlisting}
+python transient_1d_explicit.py
+\end{lstlisting}
+
+Then run the implicit program using
+
+\begin{lstlisting}
+python transient_1d_implicit.py
+\end{lstlisting}
+
+The programs may generate image files such as
+
+\begin{lstlisting}
+transient_1d_explicit_surface.png
+transient_1d_implicit_surface.png
+\end{lstlisting}
+
+These images should appear in the same folder from which the Python
+programs were executed unless the program explicitly specifies another
+location.
+
+For these examples, the final surface plots will typically show
+
+\begin{itemize}
+    \item position on the $x$-axis;
+    \item time on the $y$-axis;
+    \item temperature on the surface or $z$-axis.
+\end{itemize}
+
+Comparing the results from the explicit and implicit programs is useful
+because both methods approximate the same governing differential
+equation using different numerical procedures.
+
+% ============================================================
+\subsection*{11. Parameters You Will Commonly Modify}
+% ============================================================
+
+The numerical example programs are written so that the primary problem
+parameters appear near the beginning of the file.
+
+For a one-dimensional transient heat-conduction problem, these may
+include quantities such as
+
+\begin{lstlisting}[style=python]
+k = 15.0          # Thermal conductivity, W/(m K)
+rho = 7800.0      # Density, kg/m^3
+cp = 500.0        # Specific heat, J/(kg K)
+
+L = 0.10          # Length of the domain, m
+T_initial = 20.0  # Initial temperature, deg. C
+T_left = 100.0    # Left boundary temperature, deg. C
+T_right = 20.0    # Right boundary temperature, deg. C
+
+nx = 51           # Number of spatial nodes
+dt = 0.10         # Time step, s
+t_final = 100.0   # Total simulation time, s
+\end{lstlisting}
+
+For most assignments, you should modify these input values rather than
+rewriting the numerical method itself unless specifically instructed to
+do so.
+
+Read the comments in the supplied Python files carefully. The example
+programs are intentionally commented to explain the numerical procedure.
+
+% ============================================================
+\subsection*{12. Python Compared with MATLAB}
+% ============================================================
+
+If you are familiar with MATLAB, much of Python will be recognizable.
+
+For example, the following Python commands create an array and calculate
+its square:
+
+\begin{lstlisting}[style=python]
+import numpy as np
+
+x = np.linspace(0, 10, 101)
+y = x**2
+\end{lstlisting}
+
+A simple plot can be generated with
+
+\begin{lstlisting}[style=python]
+import matplotlib.pyplot as plt
+
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("x^2")
+plt.grid(True)
+plt.show()
+\end{lstlisting}
+
+Some common MATLAB and Python differences are summarized below.
+
+\begin{center}
+
+{\small
+\renewcommand{\arraystretch}{1.18}
+
+\begin{tabularx}{0.96\linewidth}
+{@{}P{1.75in}P{1.65in}Y@{}}
+
+\toprule
+
+\textbf{Task} &
+\textbf{MATLAB} &
+\textbf{Python / NumPy}
+\\
+
+\midrule
+
+First array index &
+1 &
+0
+\\
+
+Element-by-element power &
+\texttt{x.\^{}2} &
+\texttt{x**2}
+\\
+
+Matrix multiplication &
+\texttt{A*B} &
+\texttt{A @ B}
+\\
+
+Element-by-element multiplication &
+\texttt{A.*B} &
+\texttt{A * B}
+\\
+
+Array dimensions &
+\texttt{size(A)} &
+\texttt{A.shape}
+\\
+
+Number of entries &
+\texttt{length(x)} &
+\texttt{len(x)}
+\\
+
+Execute script &
+MATLAB Run command &
+\texttt{python script.py}
+\\
+
+\bottomrule
+
+\end{tabularx}
+}
+
+\end{center}
+
+One particularly important difference is that Python uses
+\textbf{indentation} to identify commands that belong inside loops,
+functions, and conditional statements.
+
+For example:
+
+\begin{lstlisting}[style=python]
+for i in range(5):
+    value = i**2
+    print(i, value)
+\end{lstlisting}
+
+The spaces before \texttt{value} and \texttt{print} are meaningful.
+Incorrect indentation can cause a Python error.
+
+% ============================================================
+\subsection*{13. A Simple Python Test}
+% ============================================================
+
+Before running the heat-conduction programs, verify that Python,
+NumPy, and Matplotlib are working correctly.
+
+Create a file named
+
+\begin{lstlisting}
+test_python.py
+\end{lstlisting}
+
+and place the following code in the file:
+
+\begin{lstlisting}[style=python]
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create 11 equally spaced values between 0 and 10.
+x = np.linspace(0, 10, 11)
+
+# Calculate the square of each value.
+y = x**2
+
+# Print the arrays to the command window.
+print("x =", x)
+print("y =", y)
+
+# Create a simple plot.
+plt.plot(x, y, "o-")
+plt.xlabel("x")
+plt.ylabel("x^2")
+plt.grid(True)
+plt.tight_layout()
+
+# Save a copy of the figure.
+plt.savefig("test_python.png", dpi=300)
+
+# Display the figure.
+plt.show()
+
+print("Calculation complete.")
+print("Figure saved as test_python.png")
+\end{lstlisting}
+
+Run the program using
+
+\begin{lstlisting}
+python test_python.py
+\end{lstlisting}
+
+You should see the numerical values printed in the command window and a
+graph appear on the screen.
+
+After the program runs, the assignment folder should also contain
+
+\begin{lstlisting}
+test_python.png
+\end{lstlisting}
+
+If this example works, your Python environment is ready for the
+numerical assignments.
+
+% ============================================================
+\subsection*{14. Starting Work on Another Day}
+% ============================================================
+
+You do \textbf{not} recreate the environment each time you work on an
+assignment.
+
+After restarting the computer, open the Anaconda Prompt and activate
+the existing environment:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+Then move to the assignment folder:
+
+\begin{lstlisting}
+cd /d "C:\Users\YOUR_USERNAME\Documents\MAE623\Assignment1"
+\end{lstlisting}
+
+Check the files:
+
+\begin{lstlisting}
+dir
+\end{lstlisting}
+
+Then execute the desired Python program:
+
+\begin{lstlisting}
+python transient_1d_explicit.py
+\end{lstlisting}
+
+or
+
+\begin{lstlisting}
+python transient_1d_implicit.py
+\end{lstlisting}
+
+When finished, you may close the Anaconda Prompt directly or deactivate
+the environment:
+
+\begin{lstlisting}
+conda deactivate
+\end{lstlisting}
+
+% ============================================================
+\subsection*{15. Installing an Additional Python Package}
+% ============================================================
+
+If a future assignment requires a package that is not installed, first
+activate the course environment:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+Then install the package. For example:
+
+\begin{lstlisting}
+conda install pandas
+\end{lstlisting}
+
+You can see which packages are installed using
+
+\begin{lstlisting}
+conda list
+\end{lstlisting}
+
+Avoid installing course packages into the \texttt{base} environment.
+Activate \texttt{heat\_conduction} first.
+
+% ============================================================
+\subsection*{16. Common Problems}
+% ============================================================
+
+\textbf{Python says that it cannot find the file.}
+
+For example:
+
+\begin{lstlisting}
+python: can't open file 'transient_1d_explicit.py'
+\end{lstlisting}
+
+Use
+
+\begin{lstlisting}
+dir
+\end{lstlisting}
+
+and verify that the Python file appears in the current folder. If it
+does not, use \texttt{cd} to move to the correct assignment folder.
+
+\vspace{5pt}
+
+\textbf{A required Python module is missing.}
+
+For example:
+
+\begin{lstlisting}
+ModuleNotFoundError: No module named 'numpy'
+\end{lstlisting}
+
+First make sure that the course environment is active:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+Then install the missing package:
+
+\begin{lstlisting}
+conda install numpy
+\end{lstlisting}
+
+\vspace{5pt}
+
+\textbf{The wrong Python installation is being used.}
+
+On Windows, enter
+
+\begin{lstlisting}
+where python
+\end{lstlisting}
+
+The first Python installation listed should belong to the
+\texttt{heat\_conduction} Conda environment.
+
+\vspace{5pt}
+
+\textbf{The program reports an error.}
+
+Python error messages are called \textit{tracebacks}. Begin by reading
+the error message near the bottom. The final few lines usually identify
+the immediate problem and frequently give the line number at which the
+error occurred.
+
+Do not immediately reinstall Python when a script produces an error.
+Most errors are caused by a filename, folder location, input value,
+indentation problem, or a small change to the Python code.
+
+% ============================================================
+\subsection*{Quick Start Checklist}
+% ============================================================
+
+For most assignments, the complete workflow is:
+
+\begin{enumerate}
+
+    \item Open \textbf{Anaconda Prompt}.
+
+    \item Activate the course environment:
+
+\begin{lstlisting}
+conda activate heat_conduction
+\end{lstlisting}
+
+    \item Open the assignment folder in Windows Explorer and copy its
+          path.
+
+    \item Move to the assignment folder:
+
+\begin{lstlisting}
+cd /d "PASTE PATH HERE"
+\end{lstlisting}
+
+    \item Check that the Python program is present:
+
+\begin{lstlisting}
+dir
+\end{lstlisting}
+
+    \item Execute the program:
+
+\begin{lstlisting}
+python filename.py
+\end{lstlisting}
+
+    \item Read the output printed in the command window.
+
+    \item Check the assignment folder for generated files such as
+          \texttt{.png} figures.
+
+    \item If an error occurs, read the final lines of the Python
+          traceback before changing the program.
+
+\end{enumerate}
+
+For the transient heat-conduction examples, the complete sequence will
+typically be
+
+\begin{lstlisting}
+conda activate heat_conduction
+
+cd /d "C:\Users\YOUR_USERNAME\Documents\MAE623\Assignment1"
+
+dir
+
+python transient_1d_explicit.py
+
+python transient_1d_implicit.py
+\end{lstlisting}
+
+% ============================================================
+\subsection*{Helpful References}
+% ============================================================
+
+\begin{itemize}
+
+    \item
+    \href{https://docs.conda.io/}
+         {Conda documentation}
+
+    \item
+    \href{https://numpy.org/doc/}
+         {NumPy documentation}
+
+    \item
+    \href{https://matplotlib.org/stable/}
+         {Matplotlib documentation}
+
+    \item
+    \href{https://docs.scipy.org/doc/scipy/}
+         {SciPy documentation}
+
+    \item
+    \href{https://docs.python.org/3/}
+         {Python documentation}
+
+\end{itemize}
+
+\vfill
+
+\begin{center}
+\small
+\rule{0.55\textwidth}{0.4pt}
+
+MAE 623: Heat Conduction
+
+West Virginia University
+\end{center}
+
+\end{document}
+```
